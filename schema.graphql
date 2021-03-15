@@ -3,4 +3,6 @@ type Gem @entity {
   psi: BigInt!
   owner: Bytes! # address
   burned: Boolean!
+  forgeTime: BigInt!
+  forgeBlock: BigInt!
 }

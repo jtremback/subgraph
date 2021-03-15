@@ -68,4 +68,22 @@ export class Gem extends Entity {
   set burned(value: boolean) {
     this.set("burned", Value.fromBoolean(value));
   }
+
+  get forgeTime(): BigInt {
+    let value = this.get("forgeTime");
+    return value.toBigInt();
+  }
+
+  set forgeTime(value: BigInt) {
+    this.set("forgeTime", Value.fromBigInt(value));
+  }
+
+  get forgeBlock(): BigInt {
+    let value = this.get("forgeBlock");
+    return value.toBigInt();
+  }
+
+  set forgeBlock(value: BigInt) {
+    this.set("forgeBlock", Value.fromBigInt(value));
+  }
 }

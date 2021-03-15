@@ -75,12 +75,32 @@ export function handleBurned(event: Burned): void {
   oldGem.save();
 }
 
+// function forgeInternal(opts: {
+//   tokenId: string;
+//   psi: BigInt;
+//   owner: Bytes;
+//   forgeTime: BigInt;
+//   forgeBlock: BigInt;
+// }) {
+//   let gem = new Gem(opts.tokenId.toHex());
+
+//   gem.psi = opts.psi;
+//   gem.owner = opts.owner;
+//   gem.burned = false;
+//   gem.forgeTime = opts.forgeTime;
+//   gem.forgeBlock = opts.forgeBlock;
+
+//   gem.save();
+// }
+
 export function handleForged(event: Forged): void {
   let gem = new Gem(event.params.tokenId.toHex());
 
   gem.psi = event.params.psi;
   gem.owner = event.transaction.from;
   gem.burned = false;
+  gem.forgeTime = event.block.timestamp;
+  gem.forgeBlock = event.block.number;
 
   gem.save();
 }
@@ -96,6 +116,8 @@ export function handleReforged(event: Reforged): void {
   newGem.psi = oldGem.psi;
   newGem.owner = event.transaction.from;
   newGem.burned = false;
+  newGem.forgeTime = event.block.timestamp;
+  newGem.forgeBlock = event.block.number;
 
   newGem.save();
 }
