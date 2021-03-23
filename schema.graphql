@@ -5,4 +5,10 @@ type Gem @entity {
   burned: Boolean!
   forgeTime: BigInt!
   forgeBlock: BigInt!
+  number: BigInt!
+}
+
+type LastForgedNumber @entity {
+  id: ID!
+  number: BigInt!
 }

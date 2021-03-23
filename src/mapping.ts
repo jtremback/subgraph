@@ -10,7 +10,7 @@ import {
   Reforged,
   Transfer,
 } from "../generated/Contract/Contract";
-import { Gem } from "../generated/schema";
+import { Gem, LastForgedNumber } from "../generated/schema";
 
 export function handleActivated(event: Activated): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -96,13 +96,23 @@ export function handleBurned(event: Burned): void {
 export function handleForged(event: Forged): void {
   let gem = new Gem(event.params.tokenId.toHex());
 
+  let lastForgedNumber = LastForgedNumber.load("");
+  if (lastForgedNumber == null) {
+    lastForgedNumber = new LastForgedNumber("");
+    lastForgedNumber.number = BigInt.fromString("0");
+  }
+  let currentNumber = lastForgedNumber.number.plus(BigInt.fromString("1"));
+
+  gem.number = currentNumber;
   gem.psi = event.params.psi;
   gem.owner = event.transaction.from;
   gem.burned = false;
   gem.forgeTime = event.block.timestamp;
   gem.forgeBlock = event.block.number;
-
   gem.save();
+
+  lastForgedNumber.number = currentNumber;
+  lastForgedNumber.save();
 }
 
 export function handleReforged(event: Reforged): void {
@@ -113,6 +123,14 @@ export function handleReforged(event: Reforged): void {
 
   const newGem = new Gem(event.params.newTokenId.toHex());
 
+  let lastForgedNumber = LastForgedNumber.load("");
+  if (lastForgedNumber == null) {
+    lastForgedNumber = new LastForgedNumber("");
+    lastForgedNumber.number = BigInt.fromString("0");
+  }
+  let currentNumber = lastForgedNumber.number.plus(BigInt.fromString("1"));
+
+  newGem.number = currentNumber;
   newGem.psi = oldGem.psi;
   newGem.owner = event.transaction.from;
   newGem.burned = false;
@@ -120,6 +138,9 @@ export function handleReforged(event: Reforged): void {
   newGem.forgeBlock = event.block.number;
 
   newGem.save();
+
+  lastForgedNumber.number = currentNumber;
+  lastForgedNumber.save();
 }
 
 export function handleTransfer(event: Transfer): void {

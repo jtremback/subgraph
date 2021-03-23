@@ -86,4 +86,53 @@ export class Gem extends Entity {
   set forgeBlock(value: BigInt) {
     this.set("forgeBlock", Value.fromBigInt(value));
   }
+
+  get number(): BigInt {
+    let value = this.get("number");
+    return value.toBigInt();
+  }
+
+  set number(value: BigInt) {
+    this.set("number", Value.fromBigInt(value));
+  }
+}
+
+export class LastForgedNumber extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save LastForgedNumber entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save LastForgedNumber entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("LastForgedNumber", id.toString(), this);
+  }
+
+  static load(id: string): LastForgedNumber | null {
+    return store.get("LastForgedNumber", id) as LastForgedNumber | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get number(): BigInt {
+    let value = this.get("number");
+    return value.toBigInt();
+  }
+
+  set number(value: BigInt) {
+    this.set("number", Value.fromBigInt(value));
+  }
 }
