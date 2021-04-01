@@ -1,4 +1,4 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, store } from "@graphprotocol/graph-ts";
 // import { eventNames } from "node:process";
 import {
   Contract,
@@ -11,6 +11,24 @@ import {
   Transfer,
 } from "../generated/Contract/Contract";
 import { Gem, LastForgedNumber } from "../generated/schema";
+
+function parseGemMetadata(tokenId: string): BigInt[] {
+  // Remove 0x
+  tokenId = tokenId.slice(2);
+
+  // Get latents
+  const latent1 = BigInt.fromString("0x" + tokenId.slice(0, 8));
+  const latent2 = BigInt.fromString("0x" + tokenId.slice(8, 16));
+  const latent3 = BigInt.fromString("0x" + tokenId.slice(16, 24));
+  const latent4 = BigInt.fromString("0x" + tokenId.slice(24, 32));
+
+  // Get PSI
+  const psi = BigInt.fromString("0x" + tokenId.slice(32, 64)).div(
+    BigInt.fromString("1000000000000000000")
+  );
+
+  return [latent1, latent2, latent3, latent4, psi];
+}
 
 export function handleActivated(event: Activated): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -69,31 +87,16 @@ export function handleApproval(event: Approval): void {}
 export function handleApprovalForAll(event: ApprovalForAll): void {}
 
 export function handleBurned(event: Burned): void {
-  // This seems to be the best way to delete something?
+  // Do we want to actually delete it?
+  // store.remove("Gem", event.params.tokenId.toHex());
   const oldGem = new Gem(event.params.tokenId.toHex());
   oldGem.burned = true;
   oldGem.save();
 }
 
-// function forgeInternal(opts: {
-//   tokenId: string;
-//   psi: BigInt;
-//   owner: Bytes;
-//   forgeTime: BigInt;
-//   forgeBlock: BigInt;
-// }) {
-//   let gem = new Gem(opts.tokenId.toHex());
-
-//   gem.psi = opts.psi;
-//   gem.owner = opts.owner;
-//   gem.burned = false;
-//   gem.forgeTime = opts.forgeTime;
-//   gem.forgeBlock = opts.forgeBlock;
-
-//   gem.save();
-// }
-
 export function handleForged(event: Forged): void {
+  const psi = parseGemMetadata(event.params.tokenId.toHex())[4];
+
   let gem = new Gem(event.params.tokenId.toHex());
 
   let lastForgedNumber = LastForgedNumber.load("");
@@ -104,7 +107,7 @@ export function handleForged(event: Forged): void {
   let currentNumber = lastForgedNumber.number.plus(BigInt.fromString("1"));
 
   gem.number = currentNumber;
-  gem.psi = event.params.psi;
+  gem.psi = psi;
   gem.owner = event.transaction.from;
   gem.burned = false;
   gem.forgeTime = event.block.timestamp;
@@ -116,10 +119,13 @@ export function handleForged(event: Forged): void {
 }
 
 export function handleReforged(event: Reforged): void {
-  // This seems to be the best way to delete something?
+  // Do we want to actually delete it?
+  // store.remove("Gem", event.params.oldTokenId.toHex());
   const oldGem = new Gem(event.params.oldTokenId.toHex());
   oldGem.burned = true;
   oldGem.save();
+
+  const psi = parseGemMetadata(event.params.newTokenId.toHex())[4];
 
   const newGem = new Gem(event.params.newTokenId.toHex());
 
@@ -131,7 +137,7 @@ export function handleReforged(event: Reforged): void {
   let currentNumber = lastForgedNumber.number.plus(BigInt.fromString("1"));
 
   newGem.number = currentNumber;
-  newGem.psi = oldGem.psi;
+  newGem.psi = psi;
   newGem.owner = event.transaction.from;
   newGem.burned = false;
   newGem.forgeTime = event.block.timestamp;

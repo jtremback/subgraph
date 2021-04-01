@@ -6,9 +6,9 @@ dataSources:
     name: Contract
     network: rinkeby
     source:
-      address: "0xc5b323c98550D552d55b21d6dD370E5798373709"
+      address: "0x5da58028D6305f541695B54412BbE356F5D8757C"
       abi: Contract
-      startBlock: 8286804
+      startBlock: 8334653
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -25,17 +25,17 @@ dataSources:
         - name: Contract
           file: ./abis/Contract.json
       eventHandlers:
-        - event: Activated(indexed address,indexed uint256)
+        - event: Activated(indexed uint256)
           handler: handleActivated
         - event: Approval(indexed address,indexed address,indexed uint256)
           handler: handleApproval
         - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
-        - event: Burned(indexed address,indexed uint256)
+        - event: Burned(indexed uint256)
           handler: handleBurned
-        - event: Forged(indexed address,indexed uint256,uint128)
+        - event: Forged(indexed uint256)
           handler: handleForged
-        - event: Reforged(indexed address,indexed uint256,indexed uint256)
+        - event: Reforged(indexed uint256,indexed uint256)
           handler: handleReforged
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
