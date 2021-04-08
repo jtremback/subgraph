@@ -6,6 +6,7 @@ type Gem @entity {
   forgeTime: BigInt!
   forgeBlock: BigInt!
   number: BigInt!
+  # activated: Boolean!
 }
 
 type LastForgedNumber @entity {

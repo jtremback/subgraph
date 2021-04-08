@@ -95,6 +95,15 @@ export class Gem extends Entity {
   set number(value: BigInt) {
     this.set("number", Value.fromBigInt(value));
   }
+
+  get activated(): boolean {
+    let value = this.get("activated");
+    return value.toBoolean();
+  }
+
+  set activated(value: boolean) {
+    this.set("activated", Value.fromBoolean(value));
+  }
 }
 
 export class LastForgedNumber extends Entity {
