@@ -14,7 +14,7 @@ import {
 import { Gem, LastForgedNumber } from "../generated/schema";
 
 export function handleActivated(event: Activated): void {
-  let gem = new Gem(event.params.tokenId.toHex());
+  let gem = new Gem(event.params.tokenId.toString());
   gem.activated = true;
   gem.save();
 }
@@ -25,8 +25,8 @@ export function handleApprovalForAll(event: ApprovalForAll): void {}
 
 export function handleBurned(event: Burned): void {
   // Do we want to actually delete it?
-  // store.remove("Gem", event.params.tokenId.toHex());
-  const oldGem = new Gem(event.params.tokenId.toHex());
+  // store.remove("Gem", event.params.tokenId.toString());
+  const oldGem = new Gem(event.params.tokenId.toString());
   oldGem.burned = true;
   oldGem.save();
 }
@@ -38,7 +38,7 @@ export function handleForged(event: Forged): void {
     .get("value4")
     .toBigInt();
 
-  let gem = new Gem(event.params.tokenId.toHex());
+  let gem = new Gem(event.params.tokenId.toString());
 
   let lastForgedNumber = LastForgedNumber.load("");
   if (lastForgedNumber == null) {
@@ -62,8 +62,8 @@ export function handleForged(event: Forged): void {
 
 export function handleReforged(event: Reforged): void {
   // Do we want to actually delete it?
-  // store.remove("Gem", event.params.oldTokenId.toHex());
-  const oldGem = new Gem(event.params.oldTokenId.toHex());
+  // store.remove("Gem", event.params.oldTokenId.toString());
+  const oldGem = new Gem(event.params.oldTokenId.toString());
   oldGem.burned = true;
   oldGem.save();
 
@@ -73,7 +73,7 @@ export function handleReforged(event: Reforged): void {
     .get("value4")
     .toBigInt();
 
-  const newGem = new Gem(event.params.newTokenId.toHex());
+  const newGem = new Gem(event.params.newTokenId.toString());
 
   let lastForgedNumber = LastForgedNumber.load("");
   if (lastForgedNumber == null) {
@@ -97,7 +97,7 @@ export function handleReforged(event: Reforged): void {
 }
 
 export function handleTransfer(event: Transfer): void {
-  let gem = new Gem(event.params.tokenId.toHex());
+  let gem = new Gem(event.params.tokenId.toString());
 
   gem.owner = event.params.to;
 
